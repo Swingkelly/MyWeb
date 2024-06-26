@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-green: #39FF14;
+            --dark-green: #008000;
+            --black: #000000;
+            --gray: #333333;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--black);
+            color: var(--neon-green);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background-color: var(--gray);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .game-area {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        #game-container {
+            flex: 1;
+            max-width: 500px;
+        }
+        
+        #board {
+            display: inline-grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            gap: 1px;
+            background-color: var(--dark-green);
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .cell {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        
+        .black { background-color: var(--black); }
+        .green { background-color: var(--dark-green); }
+        
+        .piece {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .player {
+            background-color: var(--neon-green);
+            border: 2px solid var(--black);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .ai {
+            background-color: var(--black);
+            border: 2px solid var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        #message {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        
+        #reset-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-family: 'Orbitron', sans-serif;
+            background-color: var(--neon-green);
+            color: var(--black);
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        #reset-button:hover {
+            background-color: var(--dark-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .instructions {
+            flex: 1;
+            max-width: 500px;
+            background-color: var(--gray);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .instructions h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-green);
+            margin-top: 0;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Checkers</h1>
+    </header>
+    
+    <div class="container">
+        <div class="game-area">
+            <div id="game-container">
+                <div id="board"></div>
+                <div id="message"></div>
+                <button id="reset-button">Reset Game</button>
+            </div>
+            
+            <div class="instructions">
+                <h2>How to Play</h2>
+                <ul>
+                    <li>You control the green pieces at the bottom of the board.</li>
+                    <li>Click on one of your pieces to select it.</li>
+                    <li>Click on an empty black square diagonally forward to move.</li>
+                    <li>Jump over and capture an opponent's piece by moving two squares diagonally.</li>
+                    <li>The goal is to capture all of the AI's pieces or block them from moving.</li>
+                    <li>The AI will make its move automatically after you've moved.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const board = document.getElementById('board');
+        const message = document.getElementById('message');
+        const resetButton = document.getElementById('reset-button');
+        let gameState = [];
+        let selectedPiece = null;
+        let currentPlayer = 'player';
+
+        function initializeBoard() {
+            board.innerHTML = '';
+            gameState = Array(8).fill().map(() => Array(8).fill(null));
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = `cell ${(row + col) % 2 === 0 ? 'green' : 'black'}`;
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    cell.addEventListener('click', handleCellClick);
+                    board.appendChild(cell);
+
+                    if ((row + col) % 2 !== 0) {
+                        if (row < 3) {
+                            gameState[row][col] = 'ai';
+                            const piece = document.createElement('div');
+                            piece.className = 'piece ai';
+                            cell.appendChild(piece);
+                        } else if (row > 4) {
+                            gameState[row][col] = 'player';
+                            const piece = document.createElement('div');
+                            piece.className = 'piece player';
+                            cell.appendChild(piece);
+                        }
+                    }
+                }
+            }
+            selectedPiece = null;
+            currentPlayer = 'player';
+            message.textContent = "Your turn";
+        }
+
+        function handleCellClick(event) {
+            if (currentPlayer !== 'player') return;
+            
+            const cell = event.target.closest('.cell');
+            if (!cell) return;
+
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.col);
+
+            if (selectedPiece) {
+                if (isValidMove(selectedPiece.row, selectedPiece.col, row, col)) {
+                    movePiece(selectedPiece.row, selectedPiece.col, row, col);
+                    selectedPiece = null;
+                    currentPlayer = 'ai';
+                    message.textContent = "AI's turn";
+                    setTimeout(aiMove, 1000);
+                } else {
+                    selectedPiece = null;
+                    message.textContent = "Invalid move. Try again.";
+                }
+            } else if (gameState[row][col] === 'player') {
+                selectedPiece = { row, col };
+                message.textContent = "Piece selected. Choose destination.";
+            }
+        }
+
+        function isValidMove(fromRow, fromCol, toRow, toCol) {
+            if (gameState[toRow][toCol] !== null) return false;
+            const rowDiff = toRow - fromRow;
+            const colDiff = Math.abs(toCol - fromCol);
+            if (rowDiff === -1 && colDiff === 1) return true;
+            if (rowDiff === -2 && colDiff === 2) {
+                const jumpedRow = fromRow - 1;
+                const jumpedCol = (fromCol + toCol) / 2;
+                return gameState[jumpedRow][jumpedCol] === 'ai';
+            }
+            return false;
+        }
+
+        function movePiece(fromRow, fromCol, toRow, toCol) {
+            gameState[toRow][toCol] = gameState[fromRow][fromCol];
+            gameState[fromRow][fromCol] = null;
+
+            const fromCell = document.querySelector(`[data-row="${fromRow}"][data-col="${fromCol}"]`);
+            const toCell = document.querySelector(`[data-row="${toRow}"][data-col="${toCol}"]`);
+
+            toCell.appendChild(fromCell.querySelector('.piece'));
+            fromCell.innerHTML = '';
+
+            if (Math.abs(toRow - fromRow) === 2) {
+                const jumpedRow = (fromRow + toRow) / 2;
+                const jumpedCol = (fromCol + toCol) / 2;
+                gameState[jumpedRow][jumpedCol] = null;
+                const jumpedCell = document.querySelector(`[data-row="${jumpedRow}"][data-col="${jumpedCol}"]`);
+                jumpedCell.innerHTML = '';
+            }
+        }
+
+        function aiMove() {
+            const aiPieces = [];
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    if (gameState[row][col] === 'ai') {
+                        aiPieces.push({ row, col });
+                    }
+                }
+            }
+
+            const validMoves = [];
+            for (const piece of aiPieces) {
+                const possibleMoves = [
+                    { row: piece.row + 1, col: piece.col - 1 },
+                    { row: piece.row + 1, col: piece.col + 1 },
+                    { row: piece.row + 2, col: piece.col - 2 },
+                    { row: piece.row + 2, col: piece.col + 2 }
+                ];
+
+                for (const move of possibleMoves) {
+                    if (isValidAiMove(piece.row, piece.col, move.row, move.col)) {
+                        validMoves.push({ from: piece, to: move });
+                    }
+                }
+            }
+
+            if (validMoves.length > 0) {
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                movePiece(randomMove.from.row, randomMove.from.col, randomMove.to.row, randomMove.to.col);
+                currentPlayer = 'player';
+                message.textContent = "Your turn";
+            } else {
+                message.textContent = "AI has no valid moves. You win!";
+            }
+        }
+
+        function isValidAiMove(fromRow, fromCol, toRow, toCol) {
+            if (toRow < 0 || toRow >= 8 || toCol < 0 || toCol >= 8) return false;
+            if (gameState[toRow][toCol] !== null) return false;
+            const rowDiff = toRow - fromRow;
+            const colDiff = Math.abs(toCol - fromCol);
+            if (rowDiff === 1 && colDiff === 1) return true;
+            if (rowDiff === 2 && colDiff === 2) {
+                const jumpedRow = (fromRow + toRow) / 2;
+                const jumpedCol = (fromCol + toCol) / 2;
+                return gameState[jumpedRow][jumpedCol] === 'player';
+            }
+            return false;
+        }
+
+        resetButton.addEventListener('click', initializeBoard);
+
+        initializeBoard();
+    </script>
+</body>
+</html>

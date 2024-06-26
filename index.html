@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mazie's Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #1fff00;
+            --secondary-green: #165a14;
+            --bg-black: #000000;
+            --text-green: #adff2f;
+        }
+        
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-green);
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        
+        .sidebar {
+            width: 100px;
+            background: linear-gradient(to bottom, var(--secondary-green), var(--primary-green));
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .sidebar.left {
+            left: 0;
+        }
+        
+        .sidebar.right {
+            right: 0;
+        }
+        
+        .main-content {
+            flex-grow: 1;
+            margin: 0 100px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: rgba(0, 255, 0, 0.05);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 255, 0, 0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        nav a {
+            color: var(--primary-green);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: var(--secondary-green);
+        }
+        
+        h1 {
+            color: var(--primary-green);
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(30, 255, 0, 0.925);
+        }
+        
+        h3 {
+            color: var(--secondary-green);
+            border-bottom: 2px solid var(--secondary-green);
+            padding-bottom: 10px;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .content-section {
+            margin-bottom: 40px;
+            background-color: rgba(0, 255, 0, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+        }
+        
+        .centered-image {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .centered-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        .video-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        video {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+        
+        p {
+            color: var(--text-green);
+            text-align: justify;
+            max-width: 800px;
+            margin: 0 auto 15px;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: var(--bg-black);
+            background-color: var(--primary-green);
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 9px #104910;
+            transition: all 0.3s ease;
+            font-family: 'Share Tech Mono', monospace;
+        }
+        
+        .button:hover {
+            background-color: var(--secondary-green);
+            transform: translateY(2px);
+            box-shadow: 0 7px #104910;
+        }
+        
+        .button:active {
+            background-color: var(--secondary-green);
+            box-shadow: 0 5px #104910;
+            transform: translateY(4px);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: rgba(0, 255, 0, 0.05);
+            margin-top: 40px;
+        }
+
+        .about-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .about-section img.profile-image {
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            margin-right: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .about-section .about-text {
+            flex: 2;
+            margin-right: 20px;
+        }
+
+        .about-section .side-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .about-section .side-images img {
+            max-width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar left"></div>
+    <div class="main-content">
+        <header>
+            <div class="container">
+                <h1>Welcome to Mazie's Website</h1>
+                <nav>
+                    <a href="#about">About</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="container">
+            <section class="content-section">
+                <div class="centered-image">
+                    <img src="3624948.png" alt="Centered Image">
+                </div>
+            </section>
+
+            <section class="content-section">
+                <div class="video-container">
+                    <video width="100%" controls>
+                        <source src="a black screen with green numbers of code running on it. The camera moves towards the screen and enters it, the green numbers moving around it.-433f6b.mp4" type="video/mp4">
+                        Your browser doesn't support the video tag.
+                    </video>
+                </div>
+            </section>
+
+            <section id="about" class="content-section">
+                <h3>About Me</h3>
+                <div class="about-section">
+                    <img src="IMG_4045.jpg" alt="Your Image" class="profile-image">
+                    <div class="about-text">
+                        <p>
+                            I'm a high school student from Minnesota, passionate about learning and balancing academic pursuits with leisure activities. My academic interests are diverse, but I particularly excel in reading and mathematics. I enjoy getting lost in a good book or solving a challenging math problem. Im particularly interested in going into the medical field if I attend college. I find biology and science interesting, but I'm open to many of the majors in the STEM field. One of my ideal career choices would be Dentistry, but I also like the idea of becoming an Engineer.
+                        </p>
+                        <p>
+                            When I'm not hitting the books, you'll often find me playing video games or sports. I love the strategic thinking, problem-solving, and creativity that many games require. During the summer months, I dedicate my time to volunteering at a local camp. This experience has been incredibly rewarding, allowing me to give back to my community while developing leadership skills and making lasting memories.
+                        </p>
+                        <p>
+                            I've always been really interested in technology and the code behind it, so creating this page was a way for me to explore code and learn more about my interests.
+                        </p>
+                    </div>
+                    <div class="side-images">
+                        <img src="openart-1d4b135513444945a5fd92677f3040fb_raw.jpg" alt="Side Image 1">
+                        <img src="openart-7f7c6eca94284777b13e94609779d06a_raw.png" alt="Side Image 2">
+                    </div>
+                </div>
+            </section>
+
+            <section class="button-container">
+                <a href="mygame.html" class="button">Play Game</a>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 Mazie's Website.</p>
+        </footer>
+    </div>
+    <div class="sidebar right"></div>
+</body>
+</html>
